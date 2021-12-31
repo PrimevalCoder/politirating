@@ -29,12 +29,11 @@ contract PoliticiansPopularity is Ownable {
     }
 
     mapping (uint => Politician) internal politicians;  // map with all stored 'Politician' entities
-    
-    
+
     uint internal politiciansLength = 0; // Size of the 'politicians' mapping; total number of on-chain stored 'Politician' entities.
+
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; 
     
-
     // Rate a politician
     /*
         _index: the index of the corresponding politician in the 'politicians' map
@@ -44,7 +43,6 @@ contract PoliticiansPopularity is Ownable {
         
         require(1 <= _rating && _rating <= 5, "Rating must be between 1 and 5.");
 
-        
         _rating *= 100;
         
         require(
@@ -64,15 +62,12 @@ contract PoliticiansPopularity is Ownable {
         politicians[_index].ratingsSum += _rating;
         politicians[_index].ratings[msg.sender] = _rating;
         politicians[_index].avgRating = politicians[_index].ratingsSum / politicians[_index].ratingsCount;  // we store the average rating, so that we don't have to return all ratings when we query.
-        
-
     }
     
     function getRatingsCount(uint _index) public view returns (uint) {
         return politicians[_index].ratingsCount;
     }
 
-    
     function addPolitician(
         string memory _fullName,
         string memory _party,
