@@ -21,6 +21,9 @@ This is a sample app that demonstrates Solidity features with Celo. It allows us
 
 ## Project Setup
 
+### Dependencies
+* The project uses the jQuery [star-rating-svg.js plugin](https://nashio.github.io/star-rating-svg/demo/) as well as the [OpenZeppelin Ownable contract](https://docs.openzeppelin.com/contracts/2.x/access-control).
+
 ### Install
 ```
 npm install
@@ -34,3 +37,13 @@ npm run dev
 ### Build
 ```
 npm run build
+```
+
+## Warning
+This project uses a deprecated version of **webpack** and subsequent modules.
+
+## Future work
+* Check the owner address by interrogating the contract rather than have the address hard-coded.
+* Add separate, more complex structures for political parties, add user reviews, etc.
+* Improve the UI.
+* ...
