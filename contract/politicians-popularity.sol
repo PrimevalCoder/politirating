@@ -19,29 +19,33 @@ contract PoliticiansPopularity is Ownable {
 
     struct Politician {
         string fullName;
-        string party;
-        string shortBio;
+        string party;		// the political party
+        string shortBio;	// short biography
         string imageURL;
-        mapping (address => uint) ratings;
-        uint ratingsCount;
-        uint ratingsSum;
+        mapping (address => uint) ratings;	// map containing all user ratings for the given politician
+        uint ratingsCount;	// total number of ratings for this politician
+        uint ratingsSum;    // the sum of all ratings; we store it in order to compute avgRating in constant time
         uint avgRating;
     }
 
-    mapping (uint => Politician) internal politicians; 
+    mapping (uint => Politician) internal politicians;  // map with all stored 'Politician' entities
     
-    // Size of the 'politicians' mapping; total number of on-chain stored 'politician' entities.
-    uint internal politiciansLength = 0;
+    
+    uint internal politiciansLength = 0; // Size of the 'politicians' mapping; total number of on-chain stored 'Politician' entities.
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; 
     
 
     // Rate a politician
+    /*
+        _index: the index of the corresponding politician in the 'politicians' map
+        _rating: user rating, from 1 to 5; stored multiplied by 100 for precision
+    */
     function ratePolitician(uint _index, uint _rating) public payable {
         
         require(1 <= _rating && _rating <= 5, "Rating must be between 1 and 5.");
 
         
-        _rating *= 100; // store it as *100 to be able to have some precision.
+        _rating *= 100;
         
         require(
           IERC20Token(cUsdTokenAddress).transferFrom(
@@ -52,11 +56,11 @@ contract PoliticiansPopularity is Ownable {
           "Transfer failed."
         );
 
-        uint prevRating = politicians[_index].ratings[msg.sender]; // // default value is 0 if the user didn't rate this politician previously.
+        uint prevRating = politicians[_index].ratings[msg.sender]; // default value is 0 if the user didn't rate this politician previously.
         if(prevRating == 0) {
             politicians[_index].ratingsCount++;
         }
-        politicians[_index].ratingsSum -= prevRating;
+        politicians[_index].ratingsSum -= prevRating;   // remove the previous rating and add the new one
         politicians[_index].ratingsSum += _rating;
         politicians[_index].ratings[msg.sender] = _rating;
         politicians[_index].avgRating = politicians[_index].ratingsSum / politicians[_index].ratingsCount;  // we store the average rating, so that we don't have to return all ratings when we query.
@@ -68,8 +72,7 @@ contract PoliticiansPopularity is Ownable {
         return politicians[_index].ratingsCount;
     }
 
-    // Create a movie. If the movie exists, update the properties
-    // Parameters: movie title, url to image, the movie plot
+    
     function addPolitician(
         string memory _fullName,
         string memory _party,

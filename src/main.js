@@ -7,9 +7,9 @@ import css from "../src/star-rating-svg.css"
 
 const ERC20_DECIMALS = 18
 const caddr_politirating = "0xA0Af19230b39a536827057b68a05B35493e5EdFd"
-const caddr_cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+const caddr_cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1" 
 const addr_owner = "0x217d85F930126Eb9B9066f0651f060C0c100E874"
-let votingPrice = new BigNumber(1).shiftedBy(ERC20_DECIMALS)
+let votingPrice = new BigNumber(1).shiftedBy(ERC20_DECIMALS)  // 1 cUSD to vote
 
 let kit
 let contract
@@ -30,7 +30,7 @@ const connectCeloWallet = async function () {
   
         const accounts = await kit.web3.eth.getAccounts()
         kit.defaultAccount = accounts[0]
-        if(accounts[0] !== addr_owner) {
+        if(accounts[0] !== addr_owner) {    // only the owner sees the "Add New Politician" button
           divAddNew.style.visibility = 'hidden'
         }
   
@@ -73,7 +73,7 @@ const connectCeloWallet = async function () {
             imageURL: p[3],
             ratingsCount: p[4],
             avgRating: p[5]/100,
-            userVote: Math.floor( uv/100 )
+            userVote: Math.floor( uv/100 )  // existing user vote for given politician; used to show the star rating accordingly
           })
         })
         _politicians.push(_politician)
@@ -91,7 +91,7 @@ const connectCeloWallet = async function () {
       eMain.appendChild(newDiv)
     })
 
-    $(".politician-star-rating").each(function(idx) {
+    $(".politician-star-rating").each(function(idx) { // add star ratings to all politician cards
       var inp = $(this).next()
       let pidx = inp.val()
       $(this).starRating({
