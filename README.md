@@ -1,7 +1,7 @@
 # Celo dApp: Politirating
 ## Description
 This is a sample app that demonstrates Solidity features with Celo. It allows users to rate their favorite politicians on-chain.
-![](ss politirating.png)
+[](ss politirating.png)
 
 ## Live Demo
 [Politirating](https://primevalcoder.github.io/politirating/)
