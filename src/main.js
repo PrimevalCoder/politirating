@@ -1,15 +1,10 @@
 import Web3 from 'web3'
 import { newKitFromWeb3 } from '@celo/contractkit'
-import BigNumber from "bignumber.js"
 import politiratingAbi from '../contract/politicians-popularity.abi.json'
 import erc20Abi from "../contract/erc20.abi.json"
 import css from "../src/star-rating-svg.css"
+import {caddr_politirating, votingPrice, caddr_cUSD, addr_owner, ERC20_DECIMALS} from "./utils/constants";
 
-const ERC20_DECIMALS = 18
-const caddr_politirating = "0xA0Af19230b39a536827057b68a05B35493e5EdFd"
-const caddr_cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1" 
-const addr_owner = "0x217d85F930126Eb9B9066f0651f060C0c100E874"
-let votingPrice = new BigNumber(1).shiftedBy(ERC20_DECIMALS)  // 1 cUSD to vote
 
 let kit
 let contract
@@ -46,23 +41,23 @@ const connectCeloWallet = async function () {
   async function approve() {
     const cUSDContract = new kit.web3.eth.Contract(erc20Abi, caddr_cUSD)
   
-    const result = await cUSDContract.methods
+   return await cUSDContract.methods
       .approve(caddr_politirating, votingPrice)
       .send({ from: kit.defaultAccount })
-    return result
+
   }
 
   const getBalance = async function () {
     const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
-    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
-    document.querySelector("#balance").textContent = cUSDBalance
+    document.querySelector("#balance").textContent  = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
+
   }
 
   const getPoliticians = async function() {
       politiciansLength = await contract.methods.getPoliticiansLength().call()
       const _politicians = []
       for (let i = 0; i < politiciansLength; i++) {
-        let _politician = new Promise(async (resolve, reject) => {
+        let _politician = new Promise(async (resolve) => {
           let p = await contract.methods.getPolitician(i).call()
           let uv = await contract.methods.getUserRating(i).call()
           resolve({
@@ -91,7 +86,7 @@ const connectCeloWallet = async function () {
       eMain.appendChild(newDiv)
     })
 
-    $(".politician-star-rating").each(function(idx) { // add star ratings to all politician cards
+    $(".politician-star-rating").each(function() { // add star ratings to all politician cards
       var inp = $(this).next()
       let pidx = inp.val()
       $(this).starRating({
@@ -161,7 +156,7 @@ const connectCeloWallet = async function () {
 
   document
   .querySelector("#btnNewPolitician")
-  .addEventListener("click", async (e) => {
+  .addEventListener("click", async () => {
     const params = [
       document.getElementById("npFullName").value,
       document.getElementById("npParty").value,
@@ -170,7 +165,7 @@ const connectCeloWallet = async function () {
     ]
     notification(`⌛ Adding "${params[0]}"...`)
     try {
-      const result = await contract.methods
+       await contract.methods
         .addPolitician(...params)
         .send({ from: kit.defaultAccount })
     } catch (error) {
@@ -194,7 +189,7 @@ const connectCeloWallet = async function () {
           notification(`⌛ Awaiting payment to register vote for "${politicians[index].fullName}"...`)
       try {
         console.log(index, userRating[ index.toString() ])
-        const result = await contract.methods
+         await contract.methods
           .ratePolitician(index, userRating[ index.toString() ])
           .send({ from: kit.defaultAccount })
         notification(`🎉 You successfully voted for "${politicians[index].fullName}".`)
